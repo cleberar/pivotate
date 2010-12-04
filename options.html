@@ -1,0 +1,50 @@
+<html>
+<head><title>My Test Extension Options</title></head>
+<script type="text/javascript">
+
+// Saves options to localStorage.
+function save_options() {
+  var keyinput = document.getElementById("pivotalkey");
+  var key = keyinput.value;
+  var projectinput = document.getElementById("pivotalprojectid");
+  var projectid = projectinput.value;
+
+  localStorage["pivotalkey"] = key;
+  localStorage["pivotalprojectid"] = projectid;
+
+  // Update status to let user know options were saved.
+  var status = document.getElementById("status");
+  status.innerHTML = "Options Saved.";
+  setTimeout(function() {
+    status.innerHTML = "";
+  }, 750);
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  var key = localStorage["pivotalkey"];
+  var projectid = localStorage["pivotalprojectid"];
+  if (!key) { return; }
+  var input = document.getElementById("pivotalkey");
+  input.value = key;
+
+  if(!projectid) { return; }
+  var projectinput = document.getElementById("pivotalprojectid");
+  projectinput.value = projectid;
+}
+
+</script>
+
+<body onload="restore_options()">
+
+  Pivotal Api Key:
+  <input type="text" name="pivotalkey" id="pivotalkey"/>
+  <br/>
+  Pivotal Project Id:
+  <input type="text" name="pivotalprojectid" id="pivotalprojectid"/>
+
+  <div id="status"></div>
+<button onclick="save_options()">Save</button>
+</body>
+</html>
+

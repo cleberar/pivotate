@@ -1,0 +1,23 @@
+{
+  "name": "Pivotal Submit",
+  "version": "0.1",
+  "description": "Submit to Pivotal Tracker with screenshot.",
+  "background_page": "background.html",
+  "options_page": "options.html",
+  "permissions" : [
+    "http://*/*",
+    "https://*/*",
+    "https://pivotate.heroku.com/*",
+    "tabs"
+  ],
+  "browser_action":{
+    "default_icon":"icon-19.png",
+    "default_title":"Pivotal Submit",
+    "default_popup":"popup.html"
+  },
+  "icons":{
+    "128":"icon-128.png",
+    "48" :"icon-48.png",
+    "16" :"icon-16.png"
+  }
+}

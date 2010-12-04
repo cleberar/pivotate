@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pivotal Submit</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      width: 300px;
+      padding: 8px;
+    }
+    h1 {font-size: 1.2em; margin: 0; padding:0; display: inline;}
+    label {width: 63px; display: block; margin-top: 10px;}
+    label:after { content:":";}
+    input, textarea {width: 284px;}
+    textarea {height: 50px;}
+    p, form {padding: 0; margin:0;}
+    .hidden {display: none;}
+  </style>
+  <script src="jquery.js" type="text/javascript"></script>
+</head>
+<body>
+  <h1>Add story to Pivotal</h1>
+  <form id="#pivotate">
+    <label for="title">Title</label>
+    <input id="title" name="title"></input>
+
+    <label for="description">Description</label>
+    <textarea id="description"></textarea>
+
+    <textarea id="imagedata" class="hidden"></textarea>
+  </form>
+  <button id="action">Create Story</button>
+</body>
+<script>
+  var bgpage = chrome.extension.getBackgroundPage();
+  var saveData = function() {
+    bgpage.setData({
+      title: $('#title').val(),
+      description: $('#description').val(),
+    });
+  }
+  var loadData = function() {
+    var data = bgpage.getData();
+    $('#title').val(data.title);
+    $('#description').val(data.description);
+  }
+  var clearData = function() {
+    bgpage.setData({
+      title: '',
+      description: ''
+    });
+    loadData();
+  }
+  
+  var init = function() {
+    chrome.tabs.executeScript(null, {file: "canvasdraw.js"});
+    chrome.tabs.insertCSS(null, {code: "canvas {border: 1px red solid; position: fixed; top: 0; left: 0}"});
+    loadData();
+    $('#title').focus();
+  }
+  $('#action').click(function() {
+    var url = '';
+    chrome.tabs.getSelected(null, function(t) {url = t.url;});
+
+    $(this).attr('disabled', true);
+    $(this).text('Saving...');
+    chrome.tabs.captureVisibleTab(null, { quality: 75}, function(imagedata) {
+      $.ajax({
+        url: 'https://pivotate.heroku.com/stories/new',
+        type: "POST",
+        data: {
+          pivotalkey: localStorage["pivotalkey"],
+          pivotalprojectid: localStorage["pivotalprojectid"],
+          title: $('#title').val(),
+          description: url+' \n '+$('#description').val(),
+          imagedata: imagedata,
+        },
+        dataType: 'html',
+        success: function(res) {
+          $('#action').text('Saved!');
+          clearData();
+          setTimeout("window.close()", 2000);
+        }
+      });
+    });
+  });
+  window.addEventListener("load", init, true);
+  window.addEventListener("unload", saveData, true);
+</script>
+</html>
