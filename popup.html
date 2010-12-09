@@ -30,21 +30,28 @@
 
     <textarea id="imagedata" class="hidden"></textarea>
   </form>
-  <button id="action">Create Story</button>
+  <button id="action">Create Story</button><img class="spinner" style="display:none" src='spinner.gif'/><span class="status"></span>
 </body>
 <script>
+  //Get the background page
   var bgpage = chrome.extension.getBackgroundPage();
+
+  //save data to the background page incase popup closed
   var saveData = function() {
     bgpage.setData({
       title: $('#title').val(),
       description: $('#description').val(),
     });
   }
+
+  //load data from background page when opening popup
   var loadData = function() {
     var data = bgpage.getData();
     $('#title').val(data.title);
     $('#description').val(data.description);
   }
+
+  //clear data from local and background
   var clearData = function() {
     bgpage.setData({
       title: '',
@@ -54,35 +61,51 @@
   }
   
   var init = function() {
+    //Initiate the canvas overlay
     chrome.tabs.executeScript(null, {file: "canvasdraw.js"});
+    //Add border to the canvas
     chrome.tabs.insertCSS(null, {code: "canvas {border: 1px red solid; position: fixed; top: 0; left: 0}"});
+    //Load data into the popup
     loadData();
+
     $('#title').focus();
   }
+
   $('#action').click(function() {
     var url = '';
-    chrome.tabs.getSelected(null, function(t) {url = t.url;});
+    var button = $(this);
 
-    $(this).attr('disabled', true);
-    $(this).text('Saving...');
+    chrome.tabs.getSelected(null, function(t) {url = t.url;});
+    button.attr('disabled', true);
+    button.text('Saving...');
+
     chrome.tabs.captureVisibleTab(null, { quality: 75}, function(imagedata) {
-      $.ajax({
-        url: 'https://pivotate.heroku.com/stories/new',
-        type: "POST",
-        data: {
+      bgpage.sendData({
           pivotalkey: localStorage["pivotalkey"],
           pivotalprojectid: localStorage["pivotalprojectid"],
           title: $('#title').val(),
           description: url+' \n '+$('#description').val(),
-          imagedata: imagedata,
-        },
-        dataType: 'html',
-        success: function(res) {
-          $('#action').text('Saved!');
-          clearData();
-          //setTimeout("window.close()", 2000);
+          imagedata: imagedata
+        }, function() {
+          button.removeAttr('disabled');
+          $('.spinner').hide();
+          $('.status').html('Saved!');
+          setTimeout(function() {
+            $('.status').html('');
+            chrome.tabs.executeScript(null, {file: "canvasdestroy.js"});
+            window.close();
+          }, 3000);
         }
-      });
+      );
+      
+      $('.spinner').show();
+      var saveInterval = setInterval(function() {
+        callback = bgpage.getPopupCallback();
+        if (callback) {
+          callback();
+          clear(setInterval);
+        }
+      }, 1000);
     });
   });
   window.addEventListener("load", init, true);
