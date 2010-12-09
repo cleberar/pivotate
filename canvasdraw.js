@@ -35,6 +35,7 @@ function init() {
   //set height and width to size of device window
   canvas.setAttribute("height", (window.innerHeight - toolbarHeight) + "px");
   canvas.setAttribute("width", window.innerWidth + "px");
+  canvas.onselectstart = function () { return false; }
       
   //add touch and mouse event listeners
   canvas.addEventListener('mousedown', onMouseDown, false);
