@@ -74,13 +74,13 @@
           pivotalprojectid: localStorage["pivotalprojectid"],
           title: $('#title').val(),
           description: url+' \n '+$('#description').val(),
-          imagedata: imagedata,
+          //imagedata: imagedata,
         },
         dataType: 'html',
         success: function(res) {
           $('#action').text('Saved!');
           clearData();
-          setTimeout("window.close()", 2000);
+          //setTimeout("window.close()", 2000);
         }
       });
     });
