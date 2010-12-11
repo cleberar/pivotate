@@ -1,5 +1,5 @@
 {
-  "name": "Pivotal Submit",
+  "name": "Pivotate",
   "version": "0.2",
   "description": "Submit to Pivotal Tracker with screenshot.",
   "background_page": "background.html",
