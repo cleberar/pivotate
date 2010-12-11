@@ -5,8 +5,6 @@
   "background_page": "background.html",
   "options_page": "options.html",
   "permissions" : [
-    //"http://*/*",
-    //"https://*/*",
     "https://pivotate.heroku.com/*",
     "tabs"
   ],
