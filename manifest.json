@@ -1,12 +1,12 @@
 {
   "name": "Pivotate",
-  "version": "0.4",
+  "version": "0.5",
   "description": "Submit to Pivotal Tracker with screenshot.",
   "background_page": "background.html",
   "options_page": "options.html",
   "permissions" : [
-    "http://*.*/*",
-    "https://*.*/*",
+    "http://*/",
+    "https://*/",
     "https://pivotate.heroku.com/*",
     "tabs"
   ],
