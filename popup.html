@@ -29,6 +29,14 @@
     <label for="description">Description</label>
     <textarea id="description"></textarea>
 
+    <label for="story_type">Story&nbsp;Type</label><select id="story_type" name="story_type">
+    <option value="feature">Feature</option>
+    <option value="bug">Bug</option>
+    <option value="chore">Chore</option>
+    <option value="release">Release</option>
+    </select>
+    <br/><br/>
+
     <textarea id="imagedata" class="hidden"></textarea>
   </form>
   <div>
@@ -95,6 +103,7 @@
           pivotalprojectid: localStorage["pivotalprojectid"],
           title: $('#title').val(),
           description: url+' \n '+$('#description').val(),
+          story_type: $('#story_type').val(),
           imagedata: imagedata
         }, function(status, success) {
           button.removeAttr('disabled');
