@@ -4,10 +4,7 @@
   "description": "Submit to Pivotal Tracker with screenshot.",
   "background_page": "background.html",
   "options_page": "options.html",
-  "permissions" : [
-    "https://pivotate.heroku.com/*",
-    "tabs"
-  ],
+  "permissions": [ "http://*/", "https://*/", "https://www.pivotaltracker.com/services/v3/*", "tabs" ],
   "browser_action":{
     "default_icon":"icon-19.png",
     "default_title":"Pivotal Submit",

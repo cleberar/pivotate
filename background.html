@@ -14,14 +14,63 @@
       }
     };
 
+    XMLHttpRequest.prototype.sendAsBinary = function(datastr) {
+      var bb = new BlobBuilder();
+      var data = new ArrayBuffer(datastr.length);
+      var ui8a = new Uint8Array(data, 0);
+      for (var i=0; i<datastr.length; i++) {
+              ui8a[i] = (datastr.charCodeAt(i) & 0xff);
+      }
+      bb.append(data);
+      var blob = bb.getBlob();
+      this.send(blob);
+    }
+
     var sendData = function(obj, callback) {
       $.ajax({
-        url: 'https://pivotate.heroku.com/stories/new',
+        url: 'http://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories',
         type: "POST",
-        data: obj,
-        dataType: 'html',
+        dataType: "xml",
+        headers: {
+          'X-TrackerToken': obj.pivotalkey
+        },
+        data: {
+          'story': {
+            'name': obj.title,
+            'description': obj.description
+          }
+        },
         success: function(res) {
-          popupCallbacks.push(callback);
+          var CRLF = "\r\n";
+          var boundary = "AJAX--------------" + (new Date).getTime();
+          var request = '--' + boundary + CRLF +
+                        'Content-Disposition: form-data; ' + 'name="Filedata"; ' + 'filename="screenshot.jpg"' + CRLF +
+                        'Content-Type: image/jpeg' + CRLF + CRLF +
+                        atob(obj.imagedata.replace(/data:image\/jpg;base64,/, '')) + CRLF +
+                        '--' + boundary + "--" + CRLF;
+          var contentType = "multipart/form-data; boundary=" + boundary;
+          var storyid = $(res).find('id').text();
+          var url = 'http://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories/' + storyid + '/attachments';
+
+          var req = new XMLHttpRequest();
+          req.open("POST", url, true);
+          // set headers and mime-type appropriately
+          req.setRequestHeader("Content-Type", contentType);
+          req.setRequestHeader("X-TrackerToken", obj.pivotalkey);
+          req.onreadystatechange = function() {
+            if (req.readyState==4) {
+              if (req.status==200) {
+                popupCallbacks.push(function() {callback('Saved!', true)});
+              }
+              else {
+                popupCallbacks.push(function() {callback('Error posting screenshot!', false)});
+              }
+            }
+          };
+          req.sendAsBinary(request);
+        },
+        error: function() {
+          popupCallbacks.push(function() {callback('Error posting story!', false)});
         }
       });
 

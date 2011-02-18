@@ -96,15 +96,18 @@
           title: $('#title').val(),
           description: url+' \n '+$('#description').val(),
           imagedata: imagedata
-        }, function() {
+        }, function(status, success) {
           button.removeAttr('disabled');
           $('.spinner').hide();
-          $('.status').html('Saved!');
-          setTimeout(function() {
-            $('.status').html('');
-            chrome.tabs.executeScript(null, {file: "canvasdestroy.js"});
-            window.close();
-          }, 3000);
+          $('.status').html(status);
+          if (success) {
+            setTimeout(function() {
+              $('.status').html('');
+              chrome.tabs.executeScript(null, {file: "canvasdestroy.js"});
+              window.close();
+            }, 3000);
+            clearData();
+          }
         }
       );
       
