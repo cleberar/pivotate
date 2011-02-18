@@ -28,7 +28,7 @@
 
     var sendData = function(obj, callback) {
       $.ajax({
-        url: 'http://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories',
+        url: 'https://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories',
         type: "POST",
         dataType: "xml",
         headers: {
@@ -51,7 +51,7 @@
                         '--' + boundary + "--" + CRLF;
           var contentType = "multipart/form-data; boundary=" + boundary;
           var storyid = $(res).find('id').text();
-          var url = 'http://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories/' + storyid + '/attachments';
+          var url = 'https://www.pivotaltracker.com/services/v3/projects/' + obj.pivotalprojectid + '/stories/' + storyid + '/attachments';
 
           var req = new XMLHttpRequest();
           req.open("POST", url, true);
