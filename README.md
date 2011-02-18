@@ -5,3 +5,6 @@ http://chrome.google.com/webstore/detail/lciiccjdlhnedcpdpelgmdd
 
 Demo video here:
 http://www.youtube.com/watch?v=OmRuPiRgQFE
+
+# Contributors
+- [Allan Carroll](https://github.com/allanca)
