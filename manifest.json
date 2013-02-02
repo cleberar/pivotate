@@ -1,18 +1,20 @@
 {
   "name": "Pivotate",
-  "version": "0.6",
-  "description": "Submit to Pivotal Tracker with screenshot.",
-  "background_page": "background.html",
-  "options_page": "options.html",
-  "permissions": [ "http://*/", "https://*/", "https://www.pivotaltracker.com/services/v3/*", "tabs" ],
-  "browser_action":{
-    "default_icon":"icon-19.png",
-    "default_title":"Pivotal Submit",
-    "default_popup":"popup.html"
+  "version": "1.0",
+  "description": "Submit to Pivotal Tracker with screenshot",
+  "background": {
+    "persistent": false,
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+     "default_icon": "icon-19.png",
+     "default_title": "Pivotal Submit!"
   },
   "icons":{
     "128":"icon-128.png",
     "48" :"icon-48.png",
     "16" :"icon-16.png"
-  }
+  },
+  "permissions": [ "http://*/", "https://*/", "https://www.pivotaltracker.com/services/v3/*", "tabs" ],
+  "manifest_version": 2
 }
