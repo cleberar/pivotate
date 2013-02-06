@@ -238,8 +238,70 @@ body {
     opacity:0.7;
 }
 
-.btn-loading .btn-icon-right span{
+.btn-loading .btn-icon-right span {
     background:#FFFFFF url(loading.gif) no-repeat center center;
+}
+
+.lockscreen {
+    background: none repeat scroll 0 0 #777777;
+    height: 100%;
+    left: 0;
+    opacity: 0.5;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2000;
+}
+
+.modal {
+    background-clip: padding-box;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 6px 6px 6px 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+    left: 50%;
+    color: #000000;
+    margin: -250px 0 0 -230px;
+    overflow: auto;
+    position: fixed;
+    top: 50%;
+    width: 460px;
+    z-index: 2050;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body input {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #222222;
+    font-weight: normal;
+    padding: 5px;
+    margin-top:10px;
+    width: 405px;
+}
+
+.modal .btn {
+    float:right;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#E6E6E6));
+    color: #333333;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0px 15px;
+    height: 30px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    margin-top: 0;
+}
+
+.modal .error {
+    color: #ff0000;
+    padding:2px;
+    display:none;
 }
 
 

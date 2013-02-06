@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Pivotate</title>
-    <link href="pivotate.css" rel="stylesheet">
-  </head>
-  <body>
-        <canvas id="canvas-background">
-        </canvas>
-
+    <head>
+        <meta charset="utf-8">
+        <title>Pivotate</title>
+        <link href="pivotate.css" rel="stylesheet">
+    </head>
+    <body>
+        <canvas id="canvas-background"></canvas>
         <div id="panel">
             <h1>
                 <img src="icon-32.png">
@@ -17,28 +15,23 @@
             
             <a href="#" id="set-token"> Set Token</a>
             <form class="form" action="#">
-                <label for="project">
-                    Project
-                </label>
+                
+                <label for="project">Project</label>
                 <select id="project" name="project" placeholder="Project List">
                 </select>
 
                 <input id="name" name="name" placeholder="Story Title"></input>
-                <label for="description">
-                    Description
-                </label>
+
+                <label for="description">Description</label>
                 <textarea id="description" name="description"></textarea>
                 
                 <div class="story">
-                    <div class="label">
-                        Story&nbsp;Type
-                    </div>
+                    <div class="label">Story&nbsp;Type</div>
                     <ul class="icons">
                         <li data-storytype="feature" title="Feature" class="feature"></li>
                         <li data-storytype="chore" title="Chore" class="chore"></li>
                         <li data-storytype="bug" title="Bug" class="bug"></li>
                         <li data-storytype="release" title="Release" class="release"></li>
-                        
                     </ul>
                 </div>
                 <input type="hidden" id="story_type" name="story_type"/>
@@ -48,6 +41,16 @@
                     <span class="btn-icon-right"><span></span></span>
                 </button>
             </form>
+        </div>
+
+        <div class="lockscreen" id="lockscreen" style="display:none;"></div>        
+        <div class="modal" id="show-token" style="display:none;">
+            <div class="modal-body">
+                <label>Please enter your api token pivotal: </label> <br/>
+                <input id="token" name="token" placeholder="Token"></input>
+                <span class="error">token is required</span>
+            </div>
+            <button class="btn" type="button" id="save-token">Save Token</button>
         </div>
   </body>
 

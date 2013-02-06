@@ -9,29 +9,27 @@ var pivotate = {
 	    storyType = document.querySelector( "#story_type" ),
 	    action = document.querySelector("#action"),
 	    name = document.querySelector("#name"),
-	    description = document.querySelector("#description"),
-	    token = this.localToken.get();
-    
+	    description = document.querySelector("#description");
+
 	canvas.setAttribute( "height",  (window.innerHeight - 125) + "px" );
 	canvas.setAttribute( "width", ( window.innerWidth - 225 ) + "px" );
 	
 	var format = new ImgCanvas(canvas);
 	format.setBackground(img);
-        
-	self.pivotal = new Pivotal(token);
-	self.loadProjects();
 
-	document.querySelector("#set-token").addEventListener('click', function() {
-	    token = prompt("Please enter your api token pivotal.");
-	    self.localToken.set(token);
-	    pivotal.setToken(token);
-	    self.loadProjects();
-	});
-    
 	document.querySelector( "#panel" ).setAttribute(
 	    'style',
 	    "width: 300px; height: " + ( window.innerHeight - 22 ) + "px"
 	);
+
+	self.token.get(function(token) {
+	    self.pivotal = new Pivotal(token);
+	    self.loadProjects();
+	});
+
+	document.querySelector("#set-token").addEventListener('click', function() {
+	   self.token.form();
+	});
 
 	for ( var i = 0, max = icons.length; i < max; i++ ) {
 	    icons[i].addEventListener( 'click', function() {
@@ -92,7 +90,9 @@ var pivotate = {
 	});
     },
     
+  
     loadProjects: function() {
+	var self = this;
 	var project = document.querySelector( "#project" );
 	this.pivotal.getProjects({
 	    done: function(result) {
@@ -108,25 +108,51 @@ var pivotate = {
 	    },
 	    fail : function(status, e) {
 		if (status == 401) {
-		    alert("enter a valid token");
-		    self.localToken.get();
+		    self.token.form(null, "enter a valid token");
 		} else {
-		    console.log(status, e);
 		    alert("An unexpected error occurred, sorry");
 		}
 	    }
 	});
     },
     
-    localToken : {
-	get : function() {
+    token : {
+	form : function(callback, alert) {
+	    
+	    document.querySelector( "#lockscreen" ).style.display = "block";
+	    document.querySelector( "#show-token" ).style.display = "block";
+
+	    if (alert) {
+		document.querySelector( ".error" ).style.display = "block";
+		document.querySelector( ".error" ).innerHTML = alert;
+	    }
+	    document.querySelector( "#save-token" ).addEventListener('click', function() {
+		var token = document.querySelector( "#token" ).value;
+		if (token == "") {
+		    document.querySelector( ".error" ).style.display = "block";
+		    return;
+		} 
+		
+		if (callback) {
+		    callback(token);
+		}
+
+		document.querySelector( ".error" ).style.display = "none";
+		window.localStorage.setItem("pivotal-api-token", token);
+		
+		document.querySelector( "#lockscreen" ).style.display = "none";
+		document.querySelector( "#show-token" ).style.display = "none";
+	    });
+	},
+
+	get : function(callback) {
 	    var token = window.localStorage.getItem( "pivotal-api-token" );
 	    if ( !token ) {
-		token = prompt("Please enter your api token pivotal.");
-		this.set(token);
+		this.form(callback);
+		return;
 	    }
 	    
-	    return token;
+	    callback(token);
 	},
 	set: function(token) {
 	    window.localStorage.setItem("pivotal-api-token", token);
