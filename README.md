@@ -1,10 +1,7 @@
 # Pivotate Chrome Extension
 
 Can be installed from:
-http://chrome.google.com/webstore/detail/lciiccjdlhnedcpdpelgmdd
+https://chrome.google.com/webstore/detail/pivotate/lciiccjdlhnedcpdpelgmddkjbnbjbja
 
-Demo video here:
-http://www.youtube.com/watch?v=OmRuPiRgQFE
 
-# Contributors
-- [Allan Carroll](https://github.com/allanca)
+Extension originally created by https://github.com/latentflip
