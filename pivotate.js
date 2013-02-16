@@ -1,8 +1,20 @@
+window.addEventListener("load", function() {
+    
+    var urlParams = {};
+    location.search.slice(1).split("&").forEach(function(param) {
+	current = param.split("=", 2);
+	urlParams[decodeURIComponent(current[0])] = decodeURIComponent(current[1]);
+    });
+    
+    pivotate.load(urlParams);
+    
+}, false);
+
 var pivotate = {
-    init : function( img ) {
+    load : function(params) {
     
 	var self = this
-      
+     
 	var project = document.querySelector( "#project" ),
 	    icons = document.querySelectorAll( '.story .icons > li' ),
 	    canvas = document.querySelector( "#canvas-background" ),
@@ -12,11 +24,11 @@ var pivotate = {
 	    description = document.querySelector("#description");
 
 	canvas.setAttribute( "height",  (window.innerHeight - 125) + "px" );
-	canvas.setAttribute( "width", ( window.innerWidth - 225 ) + "px" );
+	canvas.setAttribute( "width", ( window.innerWidth - 305 ) + "px" );
 	
-	var format = new ImgCanvas(canvas);
-	format.setBackground(img);
-
+	self.formatIMG = new ImgCanvas(canvas);
+	self.params = params || {};
+	
 	document.querySelector( "#panel" ).setAttribute(
 	    'style',
 	    "width: 300px; height: " + ( window.innerHeight - 22 ) + "px"
@@ -29,6 +41,13 @@ var pivotate = {
 
 	document.querySelector("#set-token").addEventListener('click', function() {
 	   self.token.form();
+	});
+	
+	document.querySelector("#clean").addEventListener('click', function() {
+	    var screenshot = window.sessionStorage.getItem("img-" + self.params.id);
+	    if (screenshot) {
+		self.formatIMG.setBackground(screenshot);
+	    }
 	});
 
 	for ( var i = 0, max = icons.length; i < max; i++ ) {
@@ -45,7 +64,7 @@ var pivotate = {
 	};
 	
        action.addEventListener('click', function() {
-	    
+
 	    if (name.value == "" || description.value == "" || storyType.value == "") {
 		alert('All fields are required');
 		return;
@@ -66,7 +85,7 @@ var pivotate = {
 			storyid : result.childNodes[0].getElementsByTagName("id")[0].textContent,
 			name    : "screen.png",
 			type    : "image/png",
-			content :  atob(format.getImg())
+			content :  atob(self.formatIMG.getImg())
 		    }, {
 			done: function() {
 			    alert("The story has been successfully registered.");
@@ -75,7 +94,11 @@ var pivotate = {
 			fail: function() {
 			    action.className = "btn";
 			    action.setAttribute("disabled", false);
-			    alert("An unexpected error occurred, sorry");
+				if (status == 401) {
+				    self.token.form(null, "enter a valid token");
+				} else {
+				    alert("An unexpected error occurred, sorry");
+				}
 			}
 		    });
 		},
@@ -88,18 +111,38 @@ var pivotate = {
 		}
 	    });
 	});
+       
+	var screenshot = window.sessionStorage.getItem("img-" + this.params.id);
+	if (screenshot) {
+	    this.formatIMG.setBackground(screenshot);
+	}
+	
+	window.onresize = function() {
+	    var currentImg = self.formatIMG.getDataUrl();
+	    canvas.setAttribute( "height",  (window.innerHeight - 125) + "px" );
+	    canvas.setAttribute( "width", ( window.innerWidth - 305 ) + "px" );
+	    self.formatIMG.setBackground(currentImg);
+	}
     },
     
+    setScreenShot: function(img) {
+	window.sessionStorage.setItem("img-" + this.params.id, img);
+	this.formatIMG.setBackground(img);
+    },
   
     loadProjects: function() {
-	var self = this;
-	var project = document.querySelector( "#project" );
+
+	var self = this,
+	    project = document.querySelector( "#project" );
+
 	this.pivotal.getProjects({
 	    done: function(result) {
-		for ( var i = 0, max = result.childNodes.length; i < max; i++ ) {
+
+		result = result.childNodes[0].getElementsByTagName("project");
+		for ( var i = 0, max = result.length; i < max; i++ ) {
 		    var option = document.createElement('option');
-		    option.text = result.childNodes[i].getElementsByTagName("name")[0].textContent;
-		    option.value = result.childNodes[i].getElementsByTagName("id")[0].textContent;
+		    option.text = result[i].getElementsByTagName("name")[0].textContent;
+		    option.value = result[i].getElementsByTagName("id")[0].textContent;
 		    project.add(
 			option,
 			project.options[project.selectedIndex]
@@ -108,7 +151,10 @@ var pivotate = {
 	    },
 	    fail : function(status, e) {
 		if (status == 401) {
-		    self.token.form(null, "enter a valid token");
+		    self.token.form(function(token) {
+			self.pivotal.setToken(token);
+			self.loadProjects();
+		    }, "enter a valid token");
 		} else {
 		    alert("An unexpected error occurred, sorry");
 		}

@@ -24,16 +24,17 @@ var ImgCanvas = function(canvas) {
     this.canvas.addEventListener('mouseup',  mouseEvt, false);
 }
 
-
 ImgCanvas.prototype = {
+    
     setBackground : function(background) {
 
         var self = this;
 
         if (!background) {
-            return;
+            background = this.canvas.toDataURL("image/png");
         }
 
+        self.background = background;
         var image = new Image();
         image.src = background;
         image.onload = function() {
@@ -42,7 +43,7 @@ ImgCanvas.prototype = {
                 0, 
                 0, 
                 self.canvas.getAttribute("width").replace("px", ""), 
-                self.canvas.getAttribute("height").replace("px", "")
+                self.canvas.getAttribute("width").replace("px", "") * image.height / image.width
             );
         }
     },
@@ -89,5 +90,8 @@ ImgCanvas.prototype = {
     getImg : function() {
         var dataURL = this.canvas.toDataURL("image/png");
         return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    },
+    getDataUrl : function() {
+        return this.canvas.toDataURL("image/png");
     }
 }
