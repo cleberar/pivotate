@@ -1,12 +1,13 @@
-var id = 1;
+var id = 100;
 chrome.browserAction.onClicked.addListener(function(tab) {
     chrome.tabs.captureVisibleTab(null, function(screenshotUrl) {
-        var viewTabUrl = chrome.extension.getURL('pivotate.html?id=' + (id++));
+        var currentId = id++;
+        var viewTabUrl = chrome.extension.getURL('pivotate.html?id=' + (currentId));
         chrome.tabs.create({url: viewTabUrl}, function(tab) {
             var targetId = tab.id;
             var addSnapshotImageToTab = function(tabId, changedProps) {
                 if (tabId != targetId || changedProps.status != "complete") {
-                        return;
+                    return;
                 }
 
                 chrome.tabs.onUpdated.removeListener(addSnapshotImageToTab);
@@ -14,7 +15,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                 for (var i = 0; i < views.length; i++) {
                     var view = views[i];
                     if (view.location.href == viewTabUrl) {
-                        view.pivotate.setScreenShot(screenshotUrl);
+                        view.pivotate.setScreenShot(screenshotUrl, currentId);
                         break;
                     }
                 }

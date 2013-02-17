@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>Pivotate</title>
         <link href="pivotate.css" rel="stylesheet">
+        
     </head>
     <body>
         <canvas id="canvas-background"></canvas>
@@ -38,9 +39,11 @@
                 </div>
                 <input type="hidden" id="story_type" name="story_type"/>
                
-                <button class="btn" type="button" id="action">
-                    <span class="btn-text"> Create Story</span> 
-                    <span class="btn-icon-right"><span></span></span>
+                <button class="btn" type="button" id="action" data-name="create-story">
+                    <span class="btn-text" data-name="create-story"> Create Story</span> 
+                    <span class="btn-icon-right" data-name="create-story">
+                        <span data-name="create-story"></span>
+                    </span>
                 </button>
                 
                 
@@ -56,9 +59,11 @@
             </div>
             <button class="btn" type="button" id="save-token">Save Token</button>
         </div>
-  </body>
-
-  <script src="canvas.js" type="text/javascript"></script>
-  <script src="pivotal.js" type="text/javascript"></script>
-  <script src="pivotate.js" type="text/javascript"></script>
+        
+        <script src="canvas.js" type="text/javascript"></script>
+        <script src="pivotal.js" type="text/javascript"></script>
+        <script src="pivotate.js" type="text/javascript"></script>
+        <script src="analytics.js" type="text/javascript"></script>
+    </body>
+    
 </html>

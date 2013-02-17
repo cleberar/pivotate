@@ -1,11 +1,9 @@
 window.addEventListener("load", function() {
-    
     var urlParams = {};
     location.search.slice(1).split("&").forEach(function(param) {
 	current = param.split("=", 2);
 	urlParams[decodeURIComponent(current[0])] = decodeURIComponent(current[1]);
     });
-    
     pivotate.load(urlParams);
     
 }, false);
@@ -125,9 +123,11 @@ var pivotate = {
 	}
     },
     
-    setScreenShot: function(img) {
-	window.sessionStorage.setItem("img-" + this.params.id, img);
-	this.formatIMG.setBackground(img);
+    setScreenShot: function(img, id) {
+	window.sessionStorage.setItem("img-" + id, img);
+	if (this.formatIMG) {
+	    this.formatIMG.setBackground(img);
+	}
     },
   
     loadProjects: function() {
