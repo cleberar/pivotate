@@ -19,16 +19,15 @@ var Pivotal = function(token) {
             });
         },
         addStory : function(data, callback) {
-            var send = "<story>" +
-                        "<name>" + data.name + "</name>" + 
-                        "<description>" + data.description + "</description>" + 
-                        "<story_type>" + data.story_type  + "</story_type>" + 
-                       "</story>";
+            var send = { 
+                            name: data.name,
+                            description: data.description,
+                            story_type: data.story_type
+                        };
                         
             self.request({
                 url   : "/projects/" + data.project + "/stories",
                 data  : send,
-                contentType: "application/xml",
                 done  : callback.done,
                 fail  : callback.fail
             });
