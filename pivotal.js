@@ -2,7 +2,7 @@ var Pivotal = function(token) {
     
     var self = this;
 
-    self.API_VERSION = "v3";
+    self.API_VERSION = "v5";
     self.API_HOST    = "https://www.pivotaltracker.com/services/";
     self._token      = token || "";
     

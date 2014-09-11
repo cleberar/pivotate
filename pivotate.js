@@ -137,11 +137,10 @@ var pivotate = {
 		this.pivotal.getProjects({
 		    done: function( result ) {
 		    	console.log(result);
-				result = result.childNodes[0].getElementsByTagName( "project" );
 				for ( var i = 0, max = result.length; i < max; i++ ) {
 				    var option = document.createElement( 'option' );
-				    option.text = result[i].getElementsByTagName("name")[0].textContent;
-				    option.value = result[i].getElementsByTagName("id")[0].textContent;
+				    option.text = result[i].name;
+				    option.value = result[i].id;
 				    project.add( option, project.options[project.selectedIndex] );
 				}
 			},
