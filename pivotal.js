@@ -5,6 +5,15 @@ var Pivotal = function(token) {
     self.API_VERSION = "v5";
     self.API_HOST    = "https://www.pivotaltracker.com/services/";
     self._token      = token || "";
+
+    function getArray(name, hash) {
+        console.log(name, hash);
+        var arr = {};
+        for (var k in hash) {
+            arr[name + '[0][' + k + ']'] = hash[k];
+        }
+        return arr;
+    }
     
     return {
         setToken: function(token) {
@@ -32,26 +41,50 @@ var Pivotal = function(token) {
                 fail  : callback.fail
             });
         },
+
+        addComment : function(data, callback) {
+            self.request({
+                url: "/projects/" + data.project + "/stories/" + data.storyid + "/comments",
+                data: JSON.stringify(data.data),
+                done: callback.done,
+                fail: callback.fail,
+                contentType: 'application/json'
+            });
+        },
         
         attachmentStory : function(data, callback) {
-
             var CRLF = "\r\n",
                 boundary = "AJAX--------------" + (new Date).getTime(),
+                contentType = "multipart/form-data; boundary=" + boundary,
                 send = '--' + boundary
                      + CRLF
-                     +  'Content-Disposition: form-data; ' +
-                        'name="Filedata"; ' +
-                        'filename=" ' + data.name + ' "'
+                     + 'Content-Disposition: form-data; name="project_id"' + CRLF
                      + CRLF
-                     + 'Content-Type:application/octet-stream' + CRLF
+                     + data.project + CRLF
+                     + CRLF;
+                /*
+                for (var k in data.comment) {
+                    send += '--' + boundary
+                         + CRLF
+                         + 'Content-Disposition: form-data; name="comment[' + k + ']"' + CRLF
+                         + CRLF
+                         + data.comment[k] + CRLF
+                         + CRLF
+
+                }
+                */
+                // console.log('Sending attachmentStory', send);
+                send += '--' + boundary
+                     + CRLF
+                     +  'Content-Disposition: form-data; name="file"; filename="' + data.name + '"' + CRLF
+                     + 'Content-Type: image/png' + CRLF
                      + CRLF
                      + data.content + CRLF
                      + CRLF
-                     + '--' + boundary + "--" + CRLF,
-                     contentType = "multipart/form-data; boundary=" + boundary;
+                     + '--' + boundary + "--" + CRLF;
           
             self.request({
-                url   : "/projects/" + data.project + "/stories/" + data.storyid + "/attachments",
+                url   : "/projects/" + data.project + "/uploads",
                 data  : send,
                 contentType : contentType,
                 done  : callback.done,
@@ -111,51 +144,8 @@ Pivotal.prototype  = {
                     params.fail(textStatus, errorThrown);
                 }
             },
-            processData: params.processData
+            processData: params.processData,
+            dataType: 'json'
         });
-        /*
-        var http = new XMLHttpRequest();
-        http.open( params.method, params.url, true );
-        Object.keys( params.headers ).forEach(function( key ) {
-            http.setRequestHeader( key , this[ key ] );
-        }, params.headers);
-
-        http.onreadystatechange = function() {
-            if ( http.readyState == 4 ) {
-                if ( http.status == 200 ) {
-                    if ( params.done ) {
-                        params.done(
-                            (new DOMParser()).parseFromString(
-                                http.responseText ,
-                                "text/xml"
-                            )
-                        );
-                    }
-
-                } else {
-                    if ( params.fail ) {
-                        params.fail(
-                            http.status,
-                            (new DOMParser()).parseFromString(
-                                http.responseText ,
-                                "text/xml"
-                            )
-                        );
-                    }
-                }
-            }
-        }
-        
-        if ( options.binary ) {
-            var data = new ArrayBuffer( params.data.length );
-            var ui8a = new Uint8Array( data, 0 );
-            for ( var i = 0; i < params.data.length; i++ ) {
-                ui8a[i] = ( params.data.charCodeAt(i) & 0xff );
-            }
-            http.send( new Blob([data], {type: options.binary}) );
-        } else {
-            http.send( params.data );
-        }
-        */
     }
 }

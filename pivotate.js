@@ -81,14 +81,29 @@ var pivotate = {
 					console.log('Add story done', result);
 			    	self.pivotal.attachmentStory({
 						project : project.value,
-						storyid : result.childNodes[0].getElementsByTagName("id")[0].textContent,
+						storyid : result.id,
 						name    : "screen.png",
 						type    : "image/png",
 						content :  atob(self.formatIMG.getImg())
 			    	}, {
-						done: function() {
-				    		alert( "The story has been successfully registered." );
-				    		window.close();
+						done: function(resp) {
+							console.log('rest', resp, typeof resp);
+							self.pivotal.addComment({
+								project: project.value,
+								storyid: result.id,
+								data: {
+									text: "This isa test comment",
+									file_attachments: [resp]
+								}
+							}, {
+								done: function(res) {
+									console.log('Comment added', res);
+						    		alert( "The story has been successfully registered." );
+								},
+								fail: function() {}
+							});
+
+				    		//window.close();
 						},
 						fail: function() {
 				    		action.className = "btn";
@@ -100,6 +115,7 @@ var pivotate = {
 							}
 						}
 			    	});
+
 				},
 				fail: function() {
 				    action.className = "btn";

@@ -1,5 +1,12 @@
 var id = 100;
 chrome.browserAction.onClicked.addListener(function(tab) {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+        console.log(request.greeting);
+        alert(request.greeting);
+    });
+    chrome.tabs.executeScript({
+        code: 'chrome.runtime.sendMessage({greeting: window.location})'
+    });
     chrome.tabs.captureVisibleTab(null, function(screenshotUrl) {
         var currentId = id++;
         var viewTabUrl = chrome.extension.getURL('pivotate.html?id=' + (currentId));
