@@ -57,7 +57,8 @@ var Pivotal = function(token) {
                 contentType : contentType,
                 done  : callback.done,
                 fail  : callback.fail,
-                binary : data.type
+                binary : data.type,
+                processData: false
             });
         }
     }
@@ -75,25 +76,50 @@ Pivotal.prototype  = {
                 data        : "",
                 headers     : {},
                 method      : "POST",
-                contentType : "application/x-www-form-urlencoded"
+                contentType : "application/x-www-form-urlencoded",
+                processData : true
             };
 
-        Object.keys( options ).forEach(function ( key ) {
-            params[key]  = options[key];
-        }, options);
+        $.extend(params, options);
 
         params.url = params.host + params.apiVersion + params.url;
 
+        params.headers["Content-Type"] = params.contentType;
+        params.headers["X-TrackerToken"] = this._token;
+
+
+        if ( options.binary ) {
+            var data = new ArrayBuffer( params.data.length );
+            var ui8a = new Uint8Array( data, 0 );
+            for ( var i = 0; i < params.data.length; i++ ) {
+                ui8a[i] = ( params.data.charCodeAt(i) & 0xff );
+            }
+            params.data = new Blob([data], {type: options.binary});
+        }
+
+        $.ajax(params.url, {
+            type: params.method,
+            headers: params.headers,
+            data: params.data,
+            success: function(response){
+                console.log('ynb-success', response);
+                if ( params.done ) {
+                    params.done(response);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                if ( params.fail ) {
+                    params.fail(textStatus, errorThrown);
+                }
+            },
+            processData: params.processData
+        });
+        /*
         var http = new XMLHttpRequest();
         http.open( params.method, params.url, true );
         Object.keys( params.headers ).forEach(function( key ) {
             http.setRequestHeader( key , this[ key ] );
         }, params.headers);
-
-        if ( params.contentType ) {
-            http.setRequestHeader( "Content-Type", params.contentType );
-        }
-        http.setRequestHeader( "X-TrackerToken", this._token );
 
         http.onreadystatechange = function() {
             if ( http.readyState == 4 ) {
@@ -131,5 +157,6 @@ Pivotal.prototype  = {
         } else {
             http.send( params.data );
         }
+        */
     }
 }

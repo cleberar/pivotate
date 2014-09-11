@@ -78,6 +78,7 @@ var pivotate = {
 				project     : project.value
 			},{
 				done: function( result ) {
+					console.log('Add story done', result);
 			    	self.pivotal.attachmentStory({
 						project : project.value,
 						storyid : result.childNodes[0].getElementsByTagName("id")[0].textContent,
@@ -135,6 +136,7 @@ var pivotate = {
 
 		this.pivotal.getProjects({
 		    done: function( result ) {
+		    	console.log(result);
 				result = result.childNodes[0].getElementsByTagName( "project" );
 				for ( var i = 0, max = result.length; i < max; i++ ) {
 				    var option = document.createElement( 'option' );
