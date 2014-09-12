@@ -19,40 +19,32 @@ var Pivotal = function(token) {
         setToken: function(token) {
             self._token   = token;
         },
-        getProjects : function(callback) {
-            self.request({
+        getProjects : function() {
+            return self.request({
                 url   : "/projects",
-                method: "GET",
-                done  : callback.done,
-                fail  : callback.fail
+                method: "GET"
             });
         },
-        addStory : function(data, callback) {
-            var send = { 
-                            name: data.name,
-                            description: data.description,
-                            story_type: data.story_type
-                        };
-                        
-            self.request({
+        addStory : function(data) {
+            return self.request({
                 url   : "/projects/" + data.project + "/stories",
-                data  : send,
-                done  : callback.done,
-                fail  : callback.fail
+                data  : { 
+                    name: data.name,
+                    description: data.description,
+                    story_type: data.story_type
+                }
             });
         },
 
-        addComment : function(data, callback) {
-            self.request({
+        addComment : function(data) {
+            return self.request({
                 url: "/projects/" + data.project + "/stories/" + data.storyid + "/comments",
                 data: JSON.stringify(data.data),
-                done: callback.done,
-                fail: callback.fail,
                 contentType: 'application/json'
             });
         },
         
-        attachmentStory : function(data, callback) {
+        attachmentStory : function(data) {
             var CRLF = "\r\n",
                 boundary = "AJAX--------------" + (new Date).getTime(),
                 contentType = "multipart/form-data; boundary=" + boundary,
@@ -83,12 +75,10 @@ var Pivotal = function(token) {
                      + CRLF
                      + '--' + boundary + "--" + CRLF;
           
-            self.request({
+            return self.request({
                 url   : "/projects/" + data.project + "/uploads",
                 data  : send,
                 contentType : contentType,
-                done  : callback.done,
-                fail  : callback.fail,
                 binary : data.type,
                 processData: false
             });
@@ -129,12 +119,11 @@ Pivotal.prototype  = {
             params.data = new Blob([data], {type: options.binary});
         }
 
-        $.ajax(params.url, {
+        var def = $.ajax(params.url, {
             type: params.method,
             headers: params.headers,
             data: params.data,
             success: function(response){
-                console.log('ynb-success', response);
                 if ( params.done ) {
                     params.done(response);
                 }
@@ -147,5 +136,7 @@ Pivotal.prototype  = {
             processData: params.processData,
             dataType: 'json'
         });
+
+        return def;
     }
 }

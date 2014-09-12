@@ -9,7 +9,6 @@ window.addEventListener("load", function() {
 }, false);
 
 var pivotate = {
-
     load : function( params ) {
     
 		var self = this,
@@ -76,53 +75,49 @@ var pivotate = {
 				description : description.value,
 				story_type  : storyType.value,
 				project     : project.value
-			},{
-				done: function( result ) {
-					console.log('Add story done', result);
-			    	self.pivotal.attachmentStory({
-						project : project.value,
-						storyid : result.id,
-						name    : "screen.png",
-						type    : "image/png",
-						content :  atob(self.formatIMG.getImg())
-			    	}, {
-						done: function(resp) {
-							console.log('rest', resp, typeof resp);
-							self.pivotal.addComment({
-								project: project.value,
-								storyid: result.id,
-								data: {
-									text: "This isa test comment",
-									file_attachments: [resp]
-								}
-							}, {
-								done: function(res) {
-									console.log('Comment added', res);
-						    		alert( "The story has been successfully registered." );
-								},
-								fail: function() {}
-							});
-
-				    		//window.close();
-						},
-						fail: function() {
-				    		action.className = "btn";
-				    		action.setAttribute( "disabled", false );
-							if (status == 401) {
-					    		self.token.form( null, "enter a valid token") ;
-							} else {
-					    		alert( "An unexpected error occurred, sorry" );
-							}
+			})
+			.done(function(result){
+				console.log('Add story done', result);
+		    	self.pivotal.attachmentStory({
+					project : project.value,
+					storyid : result.id,
+					name    : "screen.png",
+					type    : "image/png",
+					content :  atob(self.formatIMG.getImg())
+		    	})
+		    	.done(function(resp){
+					console.log('rest', resp, typeof resp);
+					self.pivotal.addComment({
+						project: project.value,
+						storyid: result.id,
+						data: {
+							text: "This isa test comment",
+							file_attachments: [resp]
 						}
-			    	});
+					})
+					.done(function(res){
+						console.log('Comment added', res);
+			    		alert( "The story has been successfully registered." );
+			    		//window.close();
+					})
+					.fail();
+		    	})
+		    	.fail(function(){
+		    		action.className = "btn";
+		    		action.setAttribute( "disabled", false );
+					if (status == 401) {
+			    		self.token.form( null, "enter a valid token") ;
+					} else {
+			    		alert( "An unexpected error occurred, sorry" );
+					}
+		    	});
+			})
+			.fail(function(){
+			    action.className = "btn";
+			    action.setAttribute( "disabled", false );
+			    alert( "An unexpected error occurred, sorry" );
+			});
 
-				},
-				fail: function() {
-				    action.className = "btn";
-				    action.setAttribute( "disabled", false );
-				    alert( "An unexpected error occurred, sorry" );
-				}
-	    	});
 		});
        
 		var screenshot = window.sessionStorage.getItem( "img-" + this.params.id );
@@ -144,23 +139,25 @@ var pivotate = {
 		    this.formatIMG.setBackground( img );
 		}
     },
+
+    setTabData: function(data) {
+    	console.log('tabData', data);
+    	this.tabData = data;
+    },
   
     loadProjects: function() {
 
 		var self = this,
 		    project = document.querySelector( "#project" );
 
-		this.pivotal.getProjects({
-		    done: function( result ) {
-		    	console.log(result);
+		this.pivotal.getProjects().done(function( result ) {
 				for ( var i = 0, max = result.length; i < max; i++ ) {
 				    var option = document.createElement( 'option' );
 				    option.text = result[i].name;
 				    option.value = result[i].id;
 				    project.add( option, project.options[project.selectedIndex] );
 				}
-			},
-			fail : function( status, e ) {
+			}).fail(function( status, e ) {
 				if ( status == 401 ) {
 				    self.token.form(function( token ) {
 						self.pivotal.setToken( token );
@@ -169,8 +166,7 @@ var pivotate = {
 				} else {
 				    alert( "An unexpected error occurred, sorry" );
 				}
-		    }
-		});
+		    });
     },
     
     token : {
