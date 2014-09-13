@@ -53,20 +53,8 @@ var Pivotal = function(token) {
                      + 'Content-Disposition: form-data; name="project_id"' + CRLF
                      + CRLF
                      + data.project + CRLF
-                     + CRLF;
-                /*
-                for (var k in data.comment) {
-                    send += '--' + boundary
-                         + CRLF
-                         + 'Content-Disposition: form-data; name="comment[' + k + ']"' + CRLF
-                         + CRLF
-                         + data.comment[k] + CRLF
-                         + CRLF
-
-                }
-                */
-                // console.log('Sending attachmentStory', send);
-                send += '--' + boundary
+                     + CRLF
+                     + '--' + boundary
                      + CRLF
                      +  'Content-Disposition: form-data; name="file"; filename="' + data.name + '"' + CRLF
                      + 'Content-Type: image/png' + CRLF
@@ -91,10 +79,6 @@ Pivotal.prototype  = {
     request : function( options ) {
         
         var params = {
-                done        : function(data) {},
-                fail        : function(data) {},
-                host        : this.API_HOST,
-                apiVersion  : this.API_VERSION,
                 data        : "",
                 headers     : {},
                 method      : "POST",
@@ -104,7 +88,7 @@ Pivotal.prototype  = {
 
         $.extend(params, options);
 
-        params.url = params.host + params.apiVersion + params.url;
+        params.url = this.API_HOST + this.API_VERSION + params.url;
 
         params.headers["Content-Type"] = params.contentType;
         params.headers["X-TrackerToken"] = this._token;
@@ -119,24 +103,12 @@ Pivotal.prototype  = {
             params.data = new Blob([data], {type: options.binary});
         }
 
-        var def = $.ajax(params.url, {
+        return $.ajax(params.url, {
             type: params.method,
             headers: params.headers,
             data: params.data,
-            success: function(response){
-                if ( params.done ) {
-                    params.done(response);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                if ( params.fail ) {
-                    params.fail(textStatus, errorThrown);
-                }
-            },
             processData: params.processData,
             dataType: 'json'
         });
-
-        return def;
     }
 }

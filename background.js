@@ -1,5 +1,7 @@
 var id = 100;
+var url = '';
 chrome.browserAction.onClicked.addListener(function(tab) {
+    url = tab.url;
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
         chrome.tabs.captureVisibleTab(null, function(screenshotUrl) {
             var currentId = id++;
@@ -16,8 +18,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                     for (var i = 0; i < views.length; i++) {
                         var view = views[i];
                         if (view.location.href == viewTabUrl) {
+                            console.log('background',url);
+                            alert(url);
+                            view.pivotate.setTabData({url: url});
                             view.pivotate.setScreenShot(screenshotUrl, currentId);
-                            view.pivotate.setTabData(request);
                             break;
                         }
                     }
