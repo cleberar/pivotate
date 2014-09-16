@@ -68,7 +68,7 @@ var pivotate = (function() {
 
 		var project = document.querySelector( "#project" );
 		var default_project = window.localStorage.getItem( "pivotal-project" );
-
+		project.options.length = 0;
 		request("/projects", {
 			type: "GET"
 		}).done(function( result ) {
@@ -114,17 +114,14 @@ var pivotate = (function() {
     function addStory(attach) {
 		var name = document.querySelector( "#name" ),
 			description = document.querySelector( "#description" ),
-			storyType = document.querySelector( "#story_type" ),
-			labels = $("#labels").val();
+			storyType = document.querySelector( "#story_type" );
 
-		for (var i=0; i<labels.length; i++) labels[i] = labels[i] * 1;
 
     	var data = {
 				name        : name.value,
 				description : description.value,
 				story_type  : storyType.value,
 				project_id  : project_id,
-				label_ids 	: labels,
 				comments	: [
 					{
 						text: self.url,
@@ -132,6 +129,10 @@ var pivotate = (function() {
 					}					
 				]
 			}
+		if (labels = $("#labels").val()) {
+			for (var i=0; i<labels.length; i++) labels[i] = labels[i] * 1;
+			data.label_ids = labels;
+		}
 
 		return request("/projects/" + project_id + "/stories", {
 			data: JSON.stringify(data),
