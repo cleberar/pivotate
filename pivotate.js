@@ -81,9 +81,6 @@ var pivotate = (function() {
 			}
 			project_id = project.value;
 			loadLabels();
-			setTimeout(function(){
-				console.log('url', self.url);
-			}, 1000);
 		}).fail(function( status, e ) {
 			if ( status == 401 ) {
 			    self.token.form(function( token ) {
@@ -135,8 +132,6 @@ var pivotate = (function() {
 					}					
 				]
 			}
-
-		console.log('Adding story', data);
 
 		return request("/projects/" + project_id + "/stories", {
 			data: JSON.stringify(data),
@@ -253,7 +248,6 @@ var pivotate = (function() {
 
 	    setTabData: function(data) {
 	    	self.url = data.url;
-	    	console.log(data);
 
 	    },
 	    token : {
