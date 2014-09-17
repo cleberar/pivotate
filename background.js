@@ -1,8 +1,11 @@
 var id = 100;
 var url = '';
 
+chrome.runtime.onMessage.addListener(openPivotate);
+
+
 function openPivotate(request, sender, sendResponse) {
-    chrome.tabs.captureVisibleTab(null, function(screenshotUrl) {
+    chrome.tabs.captureVisibleTab(function(screenshotUrl) {
         var currentId = id++;
         var viewTabUrl = chrome.extension.getURL('pivotate.html?id=' + (currentId));
         chrome.tabs.create({url: viewTabUrl}, function(tab) {
@@ -30,9 +33,6 @@ function openPivotate(request, sender, sendResponse) {
 }
 
 chrome.browserAction.onClicked.addListener(function(tab) {
-    url = tab.url;
-    chrome.runtime.onMessage.addListener(openPivotate);
-
     chrome.tabs.executeScript({
         // Dummy code for future use
         code: 'chrome.runtime.sendMessage({location: window.location})'

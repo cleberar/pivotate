@@ -1,6 +1,6 @@
 {
   "name": "Pivotate v5",
-  "version": "2.3",
+  "version": "2.4",
   "description": "Submit to Pivotal Tracker with screenshot",
   "background": {
     "persistent": false,
