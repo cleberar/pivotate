@@ -81,6 +81,7 @@ var pivotate = (function() {
 			}
 			project_id = project.value;
 			loadLabels();
+			loadMembers();
 		}).fail(function( status, e ) {
 			if ( status == 401 ) {
 			    self.token.form(function( token ) {
@@ -91,6 +92,24 @@ var pivotate = (function() {
 			    alert( "An unexpected error occurred, sorry" );
 			}
 	    });
+    }
+
+    function loadMembers() {
+    	var owners = document.querySelector('#owners');
+    	owners.options.length = 0;
+		request("/projects/" + project_id + "/memberships", {
+			type: "GET"
+		}).done(function( result ) {
+			for ( var i = 0, max = result.length; i < max; i++ ) {
+				if (result[i].person) {
+				    var option = document.createElement( 'option' );
+				    option.text = result[i].person.name;
+				    option.value = result[i].person.id;
+				    owners.add( option, owners.options[owners.selectedIndex] );
+				}
+			}
+			$('#owners').trigger("chosen:updated");
+		});
     }
 
 
@@ -132,6 +151,10 @@ var pivotate = (function() {
 		if (labels = $("#labels").val()) {
 			for (var i=0; i<labels.length; i++) labels[i] = labels[i] * 1;
 			data.label_ids = labels;
+		}
+		if (owners = $("#owners").val()) {
+			for (var i=0; i<owners.length; i++) owners[i] = owners[i] * 1;
+			data.owner_ids = owners;
 		}
 
 		return request("/projects/" + project_id + "/stories", {
@@ -190,10 +213,12 @@ var pivotate = (function() {
 			};
 
 	    	$('#labels').chosen();
+	    	$('#owners').chosen();
 			project.addEventListener('change', function() {
 				project_id = this.value;
 				window.localStorage.setItem( "pivotal-project", project_id);
 				loadLabels();
+				loadMembers();
 			});
 		
 	       	action.addEventListener('click', function() {
