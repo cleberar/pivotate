@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>Pivotate</title>
         <link href="pivotate.css" rel="stylesheet">
+        <link href="chosen.css" rel="stylesheet">
         
     </head>
     <body>
@@ -37,8 +38,18 @@
                         <li data-storytype="release" title="Release" class="release"></li>
                     </ul>
                 </div>
-                <input type="hidden" id="story_type" name="story_type"/>
-               
+                <input type="hidden" id="story_type" name="story_type"/><br />
+                
+                <label for="labels">Labels</label>
+                <div>
+                    <select id="labels" name="labels" placeholder="Labels" multiple style="width: 100%;">
+                    </select>
+                </div>
+                <label for="owners">Owners</label>
+                <div>
+                    <select id="owners" name="owners" placeholder="Owners" multiple style="width: 100%;">
+                    </select>
+                </div>
                 <button class="btn" type="button" id="action" data-name="create-story">
                     <span class="btn-text" data-name="create-story"> Create Story</span> 
                     <span class="btn-icon-right" data-name="create-story">
@@ -53,15 +64,17 @@
         <div class="lockscreen" id="lockscreen" style="display:none;"></div>        
         <div class="modal" id="show-token" style="display:none;">
             <div class="modal-body">
-                <label>Please enter your api token pivotal: </label> <br/>
+                <label>Please enter your pivotal API token pivotal: </label> <br/>
+                <a class="token-help" href="https://www.pivotaltracker.com/profile" target="_blank">Click here to get API token</a><br/>
                 <input id="token" name="token" placeholder="Token"></input>
                 <span class="error">token is required</span>
             </div>
             <button class="btn" type="button" id="save-token">Save Token</button>
         </div>
-        
+        <script src="jquery.js" type="text/javascript"></script>
+        <script src="jquery-ajax-blob-arraybuffer.js" type="text/javascript"></script>
+        <script src="chosen.jquery.js" type="text/javascript"></script>
         <script src="canvas.js" type="text/javascript"></script>
-        <script src="pivotal.js" type="text/javascript"></script>
         <script src="pivotate.js" type="text/javascript"></script>
     </body>
     
